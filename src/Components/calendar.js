@@ -8,16 +8,16 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 const localizer = momentLocalizer(moment);
 
 
-const Index = props => (
+const calendar = props => (
   <div>
     <Calendar
       localizer={localizer}
       events={[]}
       startAccessor="start"
       endAccessor="end"
-      style={{height: 500, width: 400}}
+      style={{height: 600, width: 600}}
     />
   </div>
 )
 
-module.exports = Index
+module.exports = calendar

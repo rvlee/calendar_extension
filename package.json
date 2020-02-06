@@ -8,6 +8,7 @@
     "dev": "./node_modules/.bin/webpack-dev-server -d --host 0.0.0.0 --config webpack.config.js --content-base src/ --colors --hot --progress --inline --watch"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "^1.14.0",
     "cookie-parser": "^1.4.4",
     "ejs": "^2.3.4",
