@@ -1,33 +1,23 @@
-/* @flow */
-
 import React, {Fragment} from 'react';
 import ReactDOM from 'react-dom';
-//css
-require('./css/index.css');
 
-type Props = {||};
+import { Calendar, momentLocalizer } from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-type State = {
-	name: string,
-}
+const localizer = momentLocalizer(moment);
 
-class Index extends React.Component<Props, State> {
-	state: State = {
-		name: 'roy',
-	}
 
-	onButtonClick = () => {
-		alert(this.state.name)
-	}
-
-	render() {
-		return (
-			<Fragment>
-				<div className="main">Index</div>
-				<button onClick={this.onButtonClick}>Click Me!</button>
-			</Fragment>
-		)
-	}
-}
+const Index = props => (
+  <div>
+    <Calendar
+      localizer={localizer}
+      events={[]}
+      startAccessor="start"
+      endAccessor="end"
+      style={{height: 500, width: 400}}
+    />
+  </div>
+)
 
 module.exports = Index
