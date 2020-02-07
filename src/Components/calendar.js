@@ -4,6 +4,11 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 
 import CalendarModal from './calendarModal';
+import { 
+  createEventRequest, 
+  updateEventRequest,
+  deleteEventRequest
+} from '../utils/api';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -17,6 +22,7 @@ class CalendarWrapper extends React.Component {
   }
 
   onEventClick = (event, isNew = false) => {
+    console.log(event);
     const eventObj = {
       openModal: true,
       clickedEvent: event,
@@ -32,6 +38,39 @@ class CalendarWrapper extends React.Component {
       clickedEvent: {}
     })
   }
+
+  onSubmit = (data, isNew, isDelete = false) => {
+    const callBackFunc = (response) => {
+      console.log("success: ", response)
+      this.setState({
+        openModal: false,
+        clickedEvent: {}
+      }, () => {
+        this.props.reloadEvents()
+      })
+    };
+
+    if (isDelete) {
+      deleteEventRequest(data.id, this.props.authToken, callBackFunc)
+    } else {
+      const payload = {
+        end: {
+          dateTime: new Date(data.end).toISOString()
+        },
+        start: {
+          dateTime: new Date(data.start).toISOString()
+        },
+        summary: data.summary
+      }
+
+      if (!isNew) {
+        updateEventRequest(data.id, this.props.authToken, payload, callBackFunc)
+      } else {
+        createEventRequest(this.props.authToken, payload, callBackFunc)
+      }
+    }
+  }
+
 
   render() {
     const {
@@ -49,15 +88,19 @@ class CalendarWrapper extends React.Component {
           startAccessor="start"
           endAccessor="end"
           style={{height: 600, width: 600}}
-          onSelectEvent={(event) => {this.onEventClick(event)}}
+          onSelectEvent={(event) => {console.log("testset", event); this.onEventClick(event)}}
           onSelectSlot={(event) => {this.onEventClick(event, true)}}
         />
-        <CalendarModal 
-          open={openModal} 
-          event={clickedEvent} 
-          handleCloseModal={this.handleCloseModal}
-          isNew={isNew}
-        />
+        {
+          openModal ? 
+          <CalendarModal 
+            open={openModal} 
+            event={clickedEvent} 
+            handleCloseModal={this.handleCloseModal}
+            onSubmit={this.onSubmit}
+            isNew={isNew}
+          /> : null
+        }
       </div>
     )
   }
