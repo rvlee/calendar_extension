@@ -3,10 +3,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Calendar from './Components/calendar';
-import axios from 'axios';
-import test from './test';
 
-const calendarAPIUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
+import test from './test';
+import { getEventRequest } from './utils/api';
 
 class App extends React.Component<Props> {
 	state = {
@@ -32,21 +31,11 @@ class App extends React.Component<Props> {
 	getCalendar = () => {
 		const timeMax = this.getTime(1)
 		const timeMin = this.getTime(-1)
-
-		axios.get(`${calendarAPIUrl}?
-			access_token=${this.state.authToken}&
-			orderBy=starttime&
-			singleEvents=true&
-			timeMax=${timeMax}&
-			timeMin=${timeMin}
-			`
-		).then(response => {
+		getEventRequest(this.state.authToken, timeMax, timeMin, (response) => {
 			this.setState({
 				events: this.createEvents(response.data.items)
 			})
-		}).catch(e => {
-			console.error(e)
-		}) 
+		})
 	}
 
 	createEvents = (events) => {
@@ -66,15 +55,21 @@ class App extends React.Component<Props> {
 		})
 	}
 
+	reloadEvents = () => {
+		this.getCalendar()
+	}
+
 	componentDidMount = () => {
-		//this.auth()
-		this.testingPurpose();
+		this.auth()
+		//this.testingPurpose();
 	}
 
 	render() {
 		return (
       <Calendar
 				events={this.state.events}
+				authToken={this.state.authToken}
+				reloadEvents={this.reloadEvents}
 			/>
 		)
 	}

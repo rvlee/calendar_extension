@@ -2,7 +2,8 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 
-import { getPath, setPath } from '../utils/getPath';
+import getPath from '../utils/getPath';
+import dataFormatter from '../utils/dataFormatter';
 
 const style = {
   paper: {
@@ -18,61 +19,39 @@ const style = {
 
 class CalendarModal extends React.Component {
   state = {
-    edit: false,
-    info: {}
+    edit: true,
+    info: dataFormatter(this.props)
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const propsId = getPath(props, 'event.eventData.id');
-    const stateId = getPath(state, 'info.eventData.id');
 
-    if (propsId !== stateId) {
-      return {
-        ...state,
-        edit: true,
-        info: props.event
-      }
-    } else if (props.isNew) {
-      console.log(props);
-      return {
-        ...state,
-        edit: props.isNew,
-        info: {}
-      }
-    }
-    return state;
-  }
-
-  editView = (key, data) => {
+  editView = (key, type) => {
+    const value = getPath(this.state, `info.${key}`)
     return this.state.edit ? (
-      <input onChange={this.onInputChange.bind(this, key)} value={data} />
+      <input type={type} onChange={this.onInputChange.bind(this, key)} value={value} />
     ) : (
-      <div>{data}</div>
+      <div>{value}</div>
     )
   }
   
-  onInputChange = (path, event) => {
-    const newState =  setPath(this.state, event.target.value, `info.${path}`);
-    this.setState(newState)
+  onInputChange = (key, event) => {
+    this.setState({
+      info: {
+        ...this.state.info,
+        [key]: event.target.value
+      }
+    })
   }
 
   render() {
     const {
       open,
-      handleCloseModal
+      handleCloseModal,
+      isNew
     } = this.props;
 
     const {
-      info: {
-        start,
-        end,
-        eventData: {
-          summary
-        } = {}
-      }
+      info
     } = this.state;
-
-    console.log(this.state.info);
 
     return (
       <Modal
@@ -82,7 +61,20 @@ class CalendarModal extends React.Component {
         onClose={handleCloseModal}
       >
         <div style={style.paper}>
-          {this.editView('eventData.summary', summary)}
+          <div>
+            {this.editView('summary', 'text')}
+          </div>
+          <div>
+            {this.editView('start', 'text')}
+          </div>
+          <div>
+            {this.editView('end', 'text')}
+          </div>
+          <button onClick={() => {this.props.onSubmit(this.state.info, this.props.isNew)}}>Submit</button>
+          {
+            !isNew ? 
+            <button onClick={() => {this.props.onSubmit(this.state.info, null, true)}}>Delete</button> : null
+          }
         </div>
       </Modal>
     )
