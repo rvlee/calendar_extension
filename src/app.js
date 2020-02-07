@@ -4,8 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Calendar from './Components/calendar';
 import axios from 'axios';
-
-type Props = {||};
+import test from './test';
 
 const calendarAPIUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
 
@@ -42,31 +41,41 @@ class App extends React.Component<Props> {
 			timeMin=${timeMin}
 			`
 		).then(response => {
-			const schedule = [];
-			response.data.items.map((event) => {
-				schedule.push({
-					start: event.start.dateTime || event.start,
-					end: event.end.dateTime || event.end,
-					title: event.summary
-				})
-			})
 			this.setState({
-				events: schedule
+				events: this.createEvents(response.data.items)
 			})
-			console.log('events', this.state.events)
 		}).catch(e => {
 			console.error(e)
 		}) 
 	}
 
+	createEvents = (events) => {
+		return events.map((event) => {
+			return {
+				start: new Date(event.start.dateTime),
+				end: new Date(event.end.dateTime),
+				title: event.summary,
+				eventData: event,
+			}
+		})
+	}
+
+	testingPurpose = () => {
+		this.setState({
+			events: this.createEvents(test.items)
+		})
+	}
+
 	componentDidMount = () => {
-		this.auth()
+		//this.auth()
+		this.testingPurpose();
 	}
 
 	render() {
-
 		return (
-      <Calendar events={this.state.events}/>
+      <Calendar
+				events={this.state.events}
+			/>
 		)
 	}
 }
