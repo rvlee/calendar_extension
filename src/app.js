@@ -11,7 +11,8 @@ const calendarAPIUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary
 
 class App extends React.Component<Props> {
 	state = {
-		authToken: ''
+		authToken: '',
+		events: []
 	}
 
 	auth = () => {
@@ -41,7 +42,18 @@ class App extends React.Component<Props> {
 			timeMin=${timeMin}
 			`
 		).then(response => {
-			console.log(response)
+			const schedule = [];
+			response.data.items.map((event) => {
+				schedule.push({
+					start: event.start.dateTime || event.start,
+					end: event.end.dateTime || event.end,
+					title: event.summary
+				})
+			})
+			this.setState({
+				events: schedule
+			})
+			console.log('events', this.state.events)
 		}).catch(e => {
 			console.error(e)
 		}) 
@@ -52,8 +64,9 @@ class App extends React.Component<Props> {
 	}
 
 	render() {
+
 		return (
-      <Calendar />
+      <Calendar events={this.state.events}/>
 		)
 	}
 }

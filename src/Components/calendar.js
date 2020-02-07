@@ -12,7 +12,7 @@ const calendar = props => (
   <div>
     <Calendar
       localizer={localizer}
-      events={[]}
+      events={props.events}
       startAccessor="start"
       endAccessor="end"
       style={{height: 600, width: 600}}
