@@ -1,7 +1,9 @@
 import React from 'react';
 import {
   DATE,
-  TEXT
+  TEXT,
+  TEXTAREA,
+  CHIP,
 } from '../constants/form';
 import DatePicker from "react-datepicker";
 import TextField from '@material-ui/core/TextField';
@@ -11,12 +13,13 @@ import {
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import Chip from './form/Chip'
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 
 import '../css/formFactory.css';
 
 export default ({canEdit, config: { type, keyVal, label }, value, onChange}) => {
   let cp = (<div>{String(value)}</div>)
-  //if (canEdit) {
     switch (type) {
       case DATE:
         cp = (
@@ -60,9 +63,25 @@ export default ({canEdit, config: { type, keyVal, label }, value, onChange}) => 
           />
         )
         break;
+      case TEXTAREA:
+        cp = (
+          <TextareaAutosize 
+            aria-label="minimum height" 
+            rowsMin={5}
+            placeholder="Enter Description here" 
+            onChange={(e) => { onChange(keyVal, e.target.value) }}
+            value={value}
+            disabled={!canEdit}
+          />
+        )
+        break;
+      case CHIP:
+        console.log(value)
+        cp = (
+          <Chip value={value} keyVal={keyVal} onChange={onChange} canEdit={canEdit}/>
+        )
       default:
         break;
     }
-  //}
-  return cp
+  return cp;
 }

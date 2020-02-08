@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import FormFactory from './formFactory';
 import formFactoryConfig from '../constants/formFactoryConfig.js'
 import getPath from '../utils/getPath';
-import dataFormatter from '../utils/dataFormatter';
+import { formFormatter } from '../utils/dataFormatter';
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -27,7 +27,7 @@ const style = {
 class CalendarModal extends React.Component {
   state = {
     edit: this.props.isNew,
-    info: dataFormatter(this.props)
+    info: formFormatter(this.props, formFactoryConfig)
   }
 
 

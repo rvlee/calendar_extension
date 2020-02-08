@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const calendarEventAPIUrl = 'https://www.googleapis.com/calendar/v3/calendars/primary/events'
 
-const getEventRequest = (authToken, timeMax, timeMin, cb) => {
+export const getEventRequest = (authToken, timeMax, timeMin, cb) => {
   axios.get(`${calendarEventAPIUrl}?
 			access_token=${authToken}&
 			orderBy=starttime&
@@ -17,7 +17,7 @@ const getEventRequest = (authToken, timeMax, timeMin, cb) => {
 		}) 
 }
 
-const createEventRequest = (authToken, data, cb) => {
+export const createEventRequest = (authToken, data, cb) => {
   axios.post(`${calendarEventAPIUrl}?access_token=${authToken}`, data)
   .then(function (response) {
     cb(response)
@@ -27,7 +27,7 @@ const createEventRequest = (authToken, data, cb) => {
   });
 }
 
-const updateEventRequest = (id, authToken, data, cb) => {
+export const updateEventRequest = (id, authToken, data, cb) => {
   axios.patch(`${calendarEventAPIUrl}/${id}?access_token=${authToken}`, data)
   .then(function (response) {
     cb(response)
@@ -37,7 +37,7 @@ const updateEventRequest = (id, authToken, data, cb) => {
   });
 }
 
-const deleteEventRequest = (id, authToken, cb) => {
+export const deleteEventRequest = (id, authToken, cb) => {
   axios.delete(`${calendarEventAPIUrl}/${id}?access_token=${authToken}`)
   .then(function (response) {
     cb(response)
@@ -45,11 +45,4 @@ const deleteEventRequest = (id, authToken, cb) => {
   .catch(function (error) {
     console.log(error);
   });
-}
-
-module.exports = {
-  getEventRequest,
-  createEventRequest,
-  updateEventRequest,
-  deleteEventRequest
 }

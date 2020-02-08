@@ -10,3 +10,8 @@
 .modal-container .form-button {
   margin-right: 8px;
 }
+
+.modal-container .chip-wrapper {
+  padding: 8px;
+  background-color: lightgray;
+}

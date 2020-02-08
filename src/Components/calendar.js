@@ -9,7 +9,10 @@ import {
   updateEventRequest,
   deleteEventRequest
 } from '../utils/api';
-
+import {
+  payloadFormatter
+} from '../utils/dataFormatter.js';
+import formFactoryConfig from '../constants/formFactoryConfig.js';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
@@ -53,16 +56,8 @@ class CalendarWrapper extends React.Component {
     if (isDelete) {
       deleteEventRequest(data.id, this.props.authToken, callBackFunc)
     } else {
-      const payload = {
-        end: {
-          dateTime: new Date(data.end).toISOString()
-        },
-        start: {
-          dateTime: new Date(data.start).toISOString()
-        },
-        summary: data.summary
-      }
-
+      const payload = payloadFormatter(data, formFactoryConfig);
+      console.log(payload)
       if (!isNew) {
         updateEventRequest(data.id, this.props.authToken, payload, callBackFunc)
       } else {
