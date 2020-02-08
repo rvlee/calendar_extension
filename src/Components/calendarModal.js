@@ -3,21 +3,19 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import DatePicker from "react-datepicker";
 import Switch from '@material-ui/core/Switch';
+import Button from '@material-ui/core/Button';
 
 import FormFactory from './formFactory';
+import formFactoryConfig from '../constants/formFactoryConfig.js'
 import getPath from '../utils/getPath';
 import dataFormatter from '../utils/dataFormatter';
-import {
-  DATE,
-  TEXT
-} from '../constants/form';
 
 import "react-datepicker/dist/react-datepicker.css";
 
 const style = {
   paper: {
     position: 'absolute',
-    width: 400,
+    width: 600,
     top: '50%',
     left: '50%',
     transform: `translate(-50%, -50%)`,
@@ -33,16 +31,17 @@ class CalendarModal extends React.Component {
   }
 
 
-  _editView = (key, type) => {
-    const value = getPath(this.state, `info.${key}`)
+  _editView = (config) => {
+    const value = getPath(this.state, `info.${config.keyVal}`)
     return (
-      <FormFactory 
-        canEdit={this.state.edit} 
-        type={type} 
-        keyVal={key}
-        value={value} 
-        onChange={this._onInputChange} 
-      />
+      <div className="form-row">
+        <FormFactory 
+          canEdit={this.state.edit}
+          config={config}
+          value={value} 
+          onChange={this._onInputChange} 
+        />
+      </div>
     )
   }
   
@@ -57,14 +56,37 @@ class CalendarModal extends React.Component {
 
   _createDeleteBtn = () => {
     return this.state.edit && !this.props.isNew ? (
-      <button onClick={() => {this.props.onSubmit(this.state.info, null, true)}}>Delete</button>
+      <Button 
+        className="form-button"
+        variant="contained"
+        onClick={() => {this.props.onSubmit(this.state.info, null, true)}}
+      >
+        Delete
+      </Button>
     ) : null
   }
 
   _createSubmitBtn = () => {
     return this.state.edit ? (
-      <button onClick={() => {this.props.onSubmit(this.state.info, this.props.isNew)}}>Submit</button>
+      <Button 
+        className="form-button"
+        variant="contained" 
+        color="primary" 
+        onClick={() => {this.props.onSubmit(this.state.info, this.props.isNew)}}
+      >
+        Submit
+      </Button>
     ) : null
+  }
+
+  _createForm = () => {
+    return formFactoryConfig.map((form) => {
+      return (
+        <div>
+          {this._editView(form)}
+        </div>
+      )
+    })
   }
 
   render() {
@@ -86,7 +108,7 @@ class CalendarModal extends React.Component {
         open={open}
         onClose={handleCloseModal}
       >
-        <div style={style.paper}>
+        <div className="modal-container" style={style.paper}>
           {
             !isNew ? 
               <Switch
@@ -96,17 +118,11 @@ class CalendarModal extends React.Component {
                 inputProps={{ 'aria-label': 'primary checkbox' }}
               />: null
           }
-          <div>
-            {this._editView('summary', TEXT)}
+          {this._createForm()}
+          <div className="form-row">
+            {this._createSubmitBtn()}
+            {this._createDeleteBtn()}
           </div>
-          <div>
-            {this._editView('start', DATE)}
-          </div>
-          <div>
-            {this._editView('end', DATE)}
-          </div>
-          {this._createSubmitBtn()}
-          {this._createDeleteBtn()}
         </div>
       </Modal>
     )

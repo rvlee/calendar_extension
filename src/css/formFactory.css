@@ -1,0 +1,12 @@
+.modal-container .MuiInputBase-input:disabled {
+  color: black;
+  border-bottom: 1px black solid;
+}
+
+.modal-container .form-row {
+  margin-bottom: 15px;
+}
+
+.modal-container .form-button {
+  margin-right: 8px;
+}
