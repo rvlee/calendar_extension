@@ -1,9 +1,18 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
+import DatePicker from "react-datepicker";
+import Switch from '@material-ui/core/Switch';
 
+import FormFactory from './formFactory';
 import getPath from '../utils/getPath';
 import dataFormatter from '../utils/dataFormatter';
+import {
+  DATE,
+  TEXT
+} from '../constants/form';
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const style = {
   paper: {
@@ -19,27 +28,43 @@ const style = {
 
 class CalendarModal extends React.Component {
   state = {
-    edit: true,
+    edit: this.props.isNew,
     info: dataFormatter(this.props)
   }
 
 
-  editView = (key, type) => {
+  _editView = (key, type) => {
     const value = getPath(this.state, `info.${key}`)
-    return this.state.edit ? (
-      <input type={type} onChange={this.onInputChange.bind(this, key)} value={value} />
-    ) : (
-      <div>{value}</div>
+    return (
+      <FormFactory 
+        canEdit={this.state.edit} 
+        type={type} 
+        keyVal={key}
+        value={value} 
+        onChange={this._onInputChange} 
+      />
     )
   }
   
-  onInputChange = (key, event) => {
+  _onInputChange = (key, value) => {
     this.setState({
       info: {
         ...this.state.info,
-        [key]: event.target.value
+        [key]: value
       }
     })
+  }
+
+  _createDeleteBtn = () => {
+    return this.state.edit && !this.props.isNew ? (
+      <button onClick={() => {this.props.onSubmit(this.state.info, null, true)}}>Delete</button>
+    ) : null
+  }
+
+  _createSubmitBtn = () => {
+    return this.state.edit ? (
+      <button onClick={() => {this.props.onSubmit(this.state.info, this.props.isNew)}}>Submit</button>
+    ) : null
   }
 
   render() {
@@ -50,7 +75,8 @@ class CalendarModal extends React.Component {
     } = this.props;
 
     const {
-      info
+      info,
+      edit
     } = this.state;
 
     return (
@@ -61,20 +87,26 @@ class CalendarModal extends React.Component {
         onClose={handleCloseModal}
       >
         <div style={style.paper}>
-          <div>
-            {this.editView('summary', 'text')}
-          </div>
-          <div>
-            {this.editView('start', 'text')}
-          </div>
-          <div>
-            {this.editView('end', 'text')}
-          </div>
-          <button onClick={() => {this.props.onSubmit(this.state.info, this.props.isNew)}}>Submit</button>
           {
             !isNew ? 
-            <button onClick={() => {this.props.onSubmit(this.state.info, null, true)}}>Delete</button> : null
+              <Switch
+                checked={edit}
+                onChange={()=>{this.setState({edit: !edit})}}
+                color="primary"
+                inputProps={{ 'aria-label': 'primary checkbox' }}
+              />: null
           }
+          <div>
+            {this._editView('summary', TEXT)}
+          </div>
+          <div>
+            {this._editView('start', DATE)}
+          </div>
+          <div>
+            {this._editView('end', DATE)}
+          </div>
+          {this._createSubmitBtn()}
+          {this._createDeleteBtn()}
         </div>
       </Modal>
     )
