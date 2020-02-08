@@ -60,8 +60,11 @@ class App extends React.Component<Props> {
 	}
 
 	componentDidMount = () => {
-		this.auth()
-		//this.testingPurpose();
+		if (process.env.NODE_ENV === 'development') {
+			this.testingPurpose();
+		} else {
+			this.auth()
+		}
 	}
 
 	render() {
