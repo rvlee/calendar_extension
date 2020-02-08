@@ -18,6 +18,7 @@ module.exports = (data) => {
     id: eventData.id,
     start,
     end,
-    summary: eventData.summary
+    summary: eventData.summary,
+    organizer: eventData.organizer.email,
   }
 }

@@ -4,34 +4,65 @@ import {
   TEXT
 } from '../constants/form';
 import DatePicker from "react-datepicker";
+import TextField from '@material-ui/core/TextField';
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardTimePicker,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
-export default ({canEdit, type, keyVal, value, onChange}) => {
+import '../css/formFactory.css';
+
+export default ({canEdit, config: { type, keyVal, label }, value, onChange}) => {
   let cp = (<div>{String(value)}</div>)
-  if (canEdit) {
+  //if (canEdit) {
     switch (type) {
       case DATE:
-        cp = <DatePicker
-          selected={new Date(value)}
-          onChange={(date) => {onChange(keyVal, date)}}
-          showTimeSelect
-          dateFormat="MM/dd/yyyy HH:mm:ss"
-          timeFormat="HH:mm"
-          timeIntervals={15}
-          timeCaption="Time"
-        />
+        cp = (
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              id="date-picker-inline"
+              label={`${label} Date`}
+              value={value}
+              onChange={(val) => { onChange(keyVal, val)}}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
+            <KeyboardTimePicker
+              margin="normal"
+              id="time-picker"
+              label={`${label} Time`}
+              value={value}
+              onChange={(val) => { onChange(keyVal, val)}}
+              KeyboardButtonProps={{
+                'aria-label': 'change time',
+              }}
+            />
+          </MuiPickersUtilsProvider>
+        )
         break;
       case TEXT:
         cp = (
-          <input 
-            type={type} 
+          <TextField
+            id="filled-secondary"
+            label={label}
+            variant="standard"
             onChange={(e) => { onChange(keyVal, e.target.value) }} 
-            value={value} 
+            value={value}
+            fullWidth
+            disabled={!canEdit}
           />
         )
         break;
       default:
         break;
     }
-  }
+  //}
   return cp
 }
